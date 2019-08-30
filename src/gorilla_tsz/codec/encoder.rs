@@ -77,11 +77,13 @@ pub fn encode(buf: &mut [u8], metadata: &mut CodecMetadata, measurement: &Measur
         if metadata.idx == 1 {
             write_varint(buf, metadata, varint::encode_zigzag(timestamp_delta))?;
         } else {
-            if timestamp_delta == metadata.last_timestamp_delta {
+            let timestamp_delta2 = timestamp_delta - metadata.last_timestamp_delta;
+
+            if timestamp_delta2 == 0 {
                 write_bit(buf, metadata, BitValue::Zero)?;
             } else {
                 write_bit(buf, metadata, BitValue::One)?;
-                write_varint(buf, metadata, varint::encode_zigzag(timestamp_delta))?;
+                write_varint(buf, metadata, varint::encode_zigzag(timestamp_delta2))?;
             }
         }
 

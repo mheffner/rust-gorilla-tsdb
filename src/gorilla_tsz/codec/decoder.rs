@@ -108,7 +108,9 @@ pub fn decode(buf: &[u8], metadata: &mut CodecMetadata) -> Result<Measurement, D
                     timestamp = delta_add(last_measurement.timestamp, metadata.last_timestamp_delta);
                 },
                 BitValue::One => {
-                    let timestamp_delta = varint::decode_zigzag(read_varint(buf, metadata)?);
+                    let timestamp_delta2 = varint::decode_zigzag(read_varint(buf, metadata)?);
+                    let timestamp_delta = metadata.last_timestamp_delta + timestamp_delta2;
+
                     timestamp = delta_add(last_measurement.timestamp, timestamp_delta);
                     metadata.last_timestamp_delta = timestamp_delta;
                 }
